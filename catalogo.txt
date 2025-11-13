@@ -1,0 +1,82 @@
+CATÁLOGO DE DADOS – IPCA (Tabela 1737, IBGE)
+
+Estrutura Original:
+- V: Valor da variável (IPCA acumulado em 12 meses).
+- D2C: Código do período (YYYYMM).
+- Outras colunas: metadados sobre território, unidade de medida e descrição da variável.
+
+Alterações Realizadas:
+1. Seleção de colunas: mantidas apenas V e D2C.
+2. Renomeação: V → IPCA; D2C → Date.
+3. Conversão de período: criada coluna 'date' em formato datetime a partir de Date (YYYYMM).
+4. Filtro temporal: mantidos apenas dados a partir de 2004-01-01.
+5. Exclusão de coluna redundante: removida coluna Date.
+6. Conversão de tipo: IPCA convertido para float.
+7. Verificação: uso de ipca.describe() para checar estatísticas básicas.
+
+Estrutura Final:
+- date (datetime64[ns]): ano/mês/dia da observação.
+- IPCA (float64): inflação acumulada em 12 meses (%).
+- Período: Jan/2004 até Out/2025.
+- Frequência: mensal.
+- Linhas: 262.
+
+------------------------------------------------------------
+
+CATÁLOGO DE DADOS – Taxa de Desocupação (Tabela 6381, IBGE)
+
+Estrutura Original:
+- V: Valor da taxa de desocupação (%).
+- D2C: Código do período (YYYYMM, trimestres móveis).
+- Outras colunas: metadados sobre território, unidade de medida e descrição da variável.
+
+Alterações Realizadas:
+1. Seleção de colunas: mantidas apenas V e D2C.
+2. Renomeação: V → desemprego; D2C → date.
+3. Conversão de período: criada coluna 'date' em formato datetime a partir de YYYYMM.
+4. Filtro temporal: mantidos apenas dados a partir de 2004-01-01.
+5. Conversão de tipo: desemprego convertido para float.
+6. Verificação: uso de desemprego.describe() para checar estatísticas básicas.
+
+Estrutura Final:
+- date (datetime64[ns]): ano/mês/dia da observação.
+- desemprego (float64): taxa de desocupação (%).
+- Período: Mar/2012 em diante.
+- Frequência: mensal .
+- Linhas: 163.
+
+------------------------------------------------------------
+
+CATÁLOGO DE DADOS – df_dados (IPCA + Desemprego)
+
+Estrutura da União:
+- A tabela foi construída a partir da junção das bases:
+  • IPCA (Tabela 1737, IBGE) → inflação acumulada em 12 meses (%).
+  • Taxa de Desocupação (Tabela 6381, IBGE) → taxa de desemprego (%).
+- A chave de união foi a coluna 'date', convertida para formato datetime.
+
+Alterações Realizadas:
+1. Harmonização das colunas: ambas as bases passaram a ter 'date' em formato datetime.
+2. Conversão de tipos: 'IPCA' e 'desemprego' convertidos para float.
+3. Filtro temporal: mantidos apenas períodos em comum (2012–2025).
+4. União: junção realizada pelo campo 'date', resultando em uma tabela única.
+5. Verificação: conferência de consistência com .describe() e inspeção de amostras.
+
+Estrutura Final do DataFrame:
+- IPCA (float64): inflação acumulada em 12 meses (%).
+- date (datetime64[ns]): período da observação (mensal).
+- desemprego (float64): taxa de desocupação (%).
+
+Observações:
+- Período: Março/2012 até Setembro/2025.
+- Frequência: Mensal (IPCA) alinhada com trimestres móveis de desemprego).
+- Total de linhas: 163.
+
+Exemplo de visualização final:
+    IPCA       date   desemprego
+0   5.24 2012-03-01        8.0
+1   5.10 2012-04-01        7.8
+2   4.99 2012-05-01        7.7
+...
+162 5.17 2025-09-01        5.6
+
